@@ -13,15 +13,14 @@ const inicializarDatos = async () => {
   try {
     await pool.query(`
       INSERT INTO estudiantes (id_estudiante, nombre, edad, nivel)
-      VALUES (1, 'Estudiante General', 8, 'Primaria')
+      VALUES (1, 'Estudiante General', 8, 'Pri')
       ON DUPLICATE KEY UPDATE nombre='Estudiante General';
     `);
-    console.log('✅ Estudiante base (ID 1) verificado/insertado.');
+    console.log(' Estudiante base (ID 1) verificado/insertado.');
   } catch (error) {
-    console.error('⚠️ Error al inicializar estudiante base:', error.message);
+    console.error(' Error al inicializar estudiante base:', error.message);
   }
 };
-
 
 inicializarDatos();
 
