@@ -9,16 +9,36 @@ app.use(cors());
 app.use(express.json());
 
 
+
 const inicializarDatos = async () => {
   try {
+    
     await pool.query(`
       INSERT INTO estudiantes (id_estudiante, nombre, edad, nivel)
       VALUES (1, 'Estudiante General', 8, '1')
       ON DUPLICATE KEY UPDATE nombre='Estudiante General';
     `);
-    console.log('✅ Estudiante base (ID 1) verificado/insertado.');
+    console.log(' Estudiante base (ID 1) verificado/insertado.');
+
+    
+    const actividadesExtra = [
+      ['Cerca / Lejos', 'pre_primario', 'Espacial'],
+      ['Encima / Debajo', 'pre_primario', 'Espacial']
+    ];
+
+    for (const [titulo, nivel, categoria] of actividadesExtra) {
+      await pool.query(`
+        INSERT INTO actividades (titulo, nivel, categoria)
+        SELECT ?, ?, ?
+        WHERE NOT EXISTS (
+          SELECT 1 FROM actividades WHERE titulo = ?
+        );
+      `, [titulo, nivel, categoria, titulo]);
+    }
+
+    console.log(' Actividades espaciales (Cerca/Lejos y Encima/Debajo) verificadas/insertadas.');
   } catch (error) {
-    console.error('⚠️ Error al inicializar estudiante base:', error.message);
+    console.error(' Error al inicializar datos base:', error.message);
   }
 };
 
