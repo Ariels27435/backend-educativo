@@ -3,26 +3,23 @@ require('dotenv').config();
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
+  port: Number(process.env.DB_PORT) || 3306,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  ssl: {
-    rejectUnauthorized: false // Requerido para Aiven
-  },
+  ssl: process.env.DB_SSL === 'false' ? undefined : { rejectUnauthorized: false },
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
 });
 
-// Probar conexión
 (async () => {
   try {
-    const connection = await pool.getConnection();
-    console.log('✅ Conexión exitosa a MySQL en Aiven');
-    connection.release();
+    const conexion = await pool.getConnection();
+    console.log('Conexion exitosa a MySQL');
+    conexion.release();
   } catch (error) {
-    console.error('❌ Error al conectar a la base de datos:', error.message);
+    console.error('Error al conectar a la base de datos:', error.message);
   }
 })();
 
